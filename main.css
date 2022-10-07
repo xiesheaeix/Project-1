@@ -22,17 +22,16 @@
     grid-template-columns: 20vmin 20vmin 20vmin 20vmin;
     grid-template-rows: 20vmin 20vmin 20vmin 20vmin;
     gap: 10px;
-
   }
 
-  #board > div {
+  #board > tile {
     display: flex;
     align-items: center;
     justify-content: center;
     border: 3px solid black;
   }
 
-  #board > div:hover{
+  #board > tile:hover{
     background-color: pink;
   }
 
