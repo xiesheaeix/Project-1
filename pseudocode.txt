@@ -1,0 +1,47 @@
+ 1. Initialize board to beginning state with 
+    all 16 tiles hidden
+                                   
+constant state variables: 
+let selectedTile1; user will choose two tiles
+let selectedTile2; selectedTile1 & 2
+let matched = false; this will display if the tiles match or not
+let winner = null; 
+let tileBoard = {'tile1': 'orange', 'tile2': 'orange', 'tile3': 'pink', 'tile4': 'pink',
+                'tile5': 'green', 'tile6': 'green', 'tile7': 'yellow', 'tile8': 'yellow',
+                'tile9': 'blue', 'tile10': 'blue', 'tile11': 'red', 'tile12': 'red',
+                'tile13': 'gray', 'tile14': 'gray', 'tile15': 'purple', 'tile16': 'purple',
+                };
+// Initialize the board with an the tiles in objects all with their matching pair
+
+ 2. Create an event listener to listen for clicks on the tile board.
+
+ 2.1 When TWO tiles are clicked they are flipped over to visible side showing
+     the color associated with the property on the tileBoard object.
+
+ 2.2 When TWO tiles are clicked they are compared
+    to see if the tiles are a match.
+
+ 2.3 If tiles are a match, tiles image is changed 
+     to visible on screen.
+     variable matched is then returned true.
+
+ 2.4 If tiles are NOT a match, they are returned
+     to the hidden state.
+     setTimeout method is used to return tiles to hidden
+     position.
+
+ 3. setTimeout method will be used to end the game after certain
+    amount of time.
+
+ 3.1 If all tiles are visible before time is up,
+    player has won the game.
+
+ 3.2 If any tile is in the hidden state when time,
+     is up player has lost.
+
+ 3.3 Create an event listener for the replay button that appers
+     after the game is over and allows player to restart the game.
+     
+
+3.4 Game will return to its orignal state but tiles will be 
+    shuffled, create an array of tile objects to shuffle.
