@@ -17,24 +17,16 @@
     text-align: center;
   }
 
-  section {
+  #board{
     display: grid;
     grid-template-columns: 20vmin 20vmin 20vmin 20vmin;
     grid-template-rows: 20vmin 20vmin 20vmin 20vmin;
     gap: 10px;
   }
 
-  #board > tile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid black;
+  #board > div {
+     border: 5px solid black;
   }
-
-  #board > tile:hover{
-    background-color: pink;
-  }
-
 
   #bottom {
     margin-top: 40px;
@@ -54,9 +46,6 @@
     width: 90px;
   }
 
-  .timer {
-    
-  }
 
 
 
