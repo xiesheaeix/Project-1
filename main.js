@@ -15,6 +15,7 @@ let tiles; // object holding the 16 tiles with their properties set to the value
 let firstTile; // will hold value of other tile clicked
 let winner; // will be set to true if all tiles are matched by end of game
 let ignoreClicks;
+let matchedTiles = [];
 
 /*----- cached element references -----*/
 const board = document.getElementById('board');
@@ -46,9 +47,10 @@ if (firstTile) {
     tempTiles.push(tiles[curTile]);
     if (tiles[curTile].color === firstTile.color) {
         document.querySelector('h4').innerText = 'its a match';
-        firstTile.matched = tiles.matched = true;
-        //tiles[firstTile].removeEventListener('click', handleClick);
-        //cards[tiles[curTile]].removeEventListener('click', handleClick);
+        tempTiles[0].matched = true;
+        tempTiles[1].matched = true;
+        matchedTiles.push(...tempTiles);
+        console.log(matchedTiles);
     } else { 
         document.querySelector('h4').innerText = 'its NOT match';
         setTimeout(function flipTiles() {
@@ -62,10 +64,12 @@ if (firstTile) {
 } else {
     firstTile = tiles[curTile];
 }
-
 render();
 }
 
+const isWinner = tiles.every((tile) => {
+    tiles.matched = true; return winner = true;
+});
 
 function renderBoard() {
     tiles.forEach(function(tile, idx) {
@@ -92,5 +96,8 @@ function shuffleTiles() {
 }
 
 function render() {
+    if (winner === true) {
+        document.querySelector('h4').innerText = 'You Win!';
+    }
     renderBoard();
 }
