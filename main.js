@@ -1,29 +1,37 @@
 /*----- constants -----*/
-const TILEBOARD = [{'color': 'orange', 'show': false, 'matched': false},
-{'color': 'pink', 'show': false, 'matched': false},
-{'color': 'green', 'show': false, 'matched': false},
-{'color': 'yellow', 'show': false, 'matched': false},
-{'color': 'blue', 'show': false, 'matched': false},
-{'color': 'red', 'show': false, 'matched': false},
-{'color': 'gray', 'show': false, 'matched': false},
-{'color': 'purple', 'show': false, 'matched': false},
+
+const CARD_BACK = 'https://i.imgur.com/kMgzjoV.png';
+
+const TILEBOARD = [
+{'img': 'https://i.imgur.com/IxA6abS.png', 'matched': false},
+{'img': 'https://i.imgur.com/rjbdewk.png', 'matched': false},
+{'img': 'https://i.imgur.com/iYdIKbg.png', 'matched': false},
+{'img': 'https://i.imgur.com/1VLycTU.png', 'matched': false},
+{'img': 'https://i.imgur.com/YDiDLca.png', 'matched': false},
+{'img': 'https://i.imgur.com/7CaJBtw.png', 'matched': false},
+{'img': 'https://i.imgur.com/hNmaXyS.png', 'matched': false},
+{'img': 'https://i.imgur.com/qqxYTKG.png', 'matched': false},
 ];
 
 /*----- app's state (variables) -----*/
 let tiles; // object holding the 16 tiles with their properties set to the value of background color they will have, contains matching tiles
-//let selectedTiles; // will hold the value of 1 of 2 of tiles clicked
 let firstTile; // will hold value of other tile clicked
 let winner; // will be set to true if all tiles are matched by end of game
 let ignoreClicks;
+//let gameOver;
 let matchedTiles = [];
+let wrongClicks;
 
+/*
 /*----- cached element references -----*/
-const board = document.getElementById('board');
+const board = document.querySelector('main');
 const button = document.querySelector('button');
 
 /*----- event listeners -----*/
 board.addEventListener('click', handleClick);
 button.addEventListener('click', init);
+
+
 
 /*----- functions -----*/
 init();
@@ -31,31 +39,32 @@ init();
 function init() {
     tiles = shuffleTiles();
     firstTile = null;
-    winner = false;
+    //winner = false;
+    wrongClicks = 0;
+    document.querySelector('h4').innerText = '';
     render();
 }
 
 
 function handleClick(evt) {
-const curTile = evt.target.id.match(/\d+/g);
-if(curTile === 'board' || ignoreClicks) return;
-tiles[curTile].show = true;
-
+const curTile = parseInt(evt.target.id);
+if(isNaN(curTile) || ignoreClicks || winner) return;
+tiles[curTile].matched = true;
 if (firstTile) {
     let tempTiles = [];
     tempTiles.push(firstTile);
     tempTiles.push(tiles[curTile]);
-    if (tiles[curTile].color === firstTile.color) {
+    if (tiles[curTile].img === firstTile.img) {
         document.querySelector('h4').innerText = 'its a match';
         tempTiles[0].matched = true;
         tempTiles[1].matched = true;
         matchedTiles.push(...tempTiles);
-        console.log(matchedTiles);
     } else { 
+        wrongClicks ++;
         document.querySelector('h4').innerText = 'its NOT match';
         setTimeout(function flipTiles() {
-            tempTiles[0].show = false;
-            tempTiles[1].show = false;
+            tempTiles[0].matched = false;
+            tempTiles[1].matched = false;
             render();
             tempTiles = [];
         }, 500);
@@ -67,19 +76,19 @@ if (firstTile) {
 render();
 }
 
-const isWinner = tiles.every((tile) => {
-    tiles.matched = true; return winner = true;
-});
 
-function renderBoard() {
-    tiles.forEach(function(tile, idx) {
-        const tileId = `tile${idx}`;
-        const tileEl = document.getElementById(tileId);
-        (tiles[idx].show || tile === firstTile) ? 
-        tileEl.style.backgroundColor = tiles[idx].color : 
-        tileEl.style.backgroundColor = 'white';
-    });
+/*
+function isWinner() {
+    if (tiles.matched === true && wrongClicks <= 5){
+        console.log('winner');
+        winner = true;
+    } else {
+        console.log('lost');
+        return winner = false;
+    }
+    render();
 }
+*/
 
 function shuffleTiles() {
     let tempTiles = [];
@@ -92,12 +101,16 @@ function shuffleTiles() {
         let tile = tempTiles.splice(rand, 1)[0];
         tiles.push(tile);
     }
+    //console.log(tiles);
     return tiles;
 }
 
 function render() {
-    if (winner === true) {
-        document.querySelector('h4').innerText = 'You Win!';
-    }
-    renderBoard();
+    tiles.forEach(function(tile, idx) {
+        const imgEl = document.getElementById(idx);
+        const src = (tile.matched || tile === firstTile) ? tile.img: CARD_BACK;
+        imgEl.src = src;
+    });
+    document.querySelector('.bad-clicks').innerText = `Wrong clicks : ${wrongClicks}`;
+    //button.style.visibility = winner ? 'visible' : 'hidden';
 }
