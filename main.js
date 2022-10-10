@@ -1,16 +1,23 @@
 /*----- constants -----*/
-const HIDDENTILE = 'imgs/star.png';
+const TILEBOARD = [{'color': 'orange', 'show': false, 'matched': false},
+{'color': 'pink', 'show': false, 'matched': false},
+{'color': 'green', 'show': false, 'matched': false},
+{'color': 'yellow', 'show': false, 'matched': false},
+{'color': 'blue', 'show': false, 'matched': false},
+{'color': 'red', 'show': false, 'matched': false},
+{'color': 'gray', 'show': false, 'matched': false},
+{'color': 'purple', 'show': false, 'matched': false},
+];
 
 /*----- app's state (variables) -----*/
-let tileBoard; // object holding the 16 tiles with their properties set to the value of background color they will have, contains matching tiles
-let selectedTile1; // will hold the value of 1 of 2 of tiles clicked
-let selectedTile2; // will hold value of other tile clicked
+let tiles; // object holding the 16 tiles with their properties set to the value of background color they will have, contains matching tiles
+let selectedTiles; // will hold the value of 1 of 2 of tiles clicked
+let firstTile; // will hold value of other tile clicked
 let winner; // will be set to true if all tiles are matched by end of game
-let matched; // will be set to true or false depending on if properties of selectedTile1 & 2 are equal to each other
-
+let ignoreClicks;
 /*----- cached element references -----*/
 const board = document.getElementById('board');
-const button = document.getElementById('button');
+const button = document.getElementById('#reset');
 
 /*----- event listeners -----*/
 board.addEventListener('click', handleClick);
@@ -20,57 +27,62 @@ board.addEventListener('click', handleClick);
 init();
 
 function init() {
-    tileBoard = [
-        {'tile': 0, 'color': 'orange', 'show': false},
-        {'tile': 1, 'color': 'orange', 'show': false},
-        {'tile': 2, 'color': 'pink', 'show': false},
-        {'tile': 3, 'color': 'pink', 'show': false},
-        {'tile': 4, 'color': 'green', 'show': false},
-        {'tile': 5, 'color': 'green', 'show': false},
-        {'tile': 6, 'color': 'yellow', 'show': false},
-        {'tile': 7, 'color': 'yellow', 'show': false},
-        {'tile': 8, 'color': 'blue', 'show': false},
-        {'tile': 9, 'color': 'blue', 'show': false},
-        {'tile': 10, 'color': 'red', 'show': false},
-        {'tile': 11, 'color': 'red', 'show': false},
-        {'tile': 12, 'color': 'gray', 'show': false},
-        {'tile': 13, 'color': 'gray', 'show': false},
-        {'tile': 14, 'color': 'purple', 'show': false},
-        {'tile': 15, 'color': 'purple', 'show': false},
-    ];
-    matched = false;
+    tiles = shuffleTiles();
+    firstTile = null;
     winner = false;
-    shuffleTiles();
     render();
 }
 
 
 function handleClick(evt) {
-let curTile = evt.target.id.match(/\d+/g);
-if(curTile === 'board') return;
-tileBoard[curTile].show = true;
+const curTile = evt.target.id.match(/\d+/g);
+if(curTile === 'board' || ignoreClicks) return;
+//console.log(curTile);
+tiles[curTile].show = true;
+if (firstTile) {
+    if (tiles[curTile].color === firstTile.color) {
+        console.log('its a match');
+        firstTile.matched = tiles.matched = true;
+    } else { 
+        console.log('not a match');
+        //setTimeout(, 500); needs to be passed a function to keep tiles 
+    }
+    firstTile = null;
+} else {
+    firstTile = tiles[curTile];
+}
+
 render();
 }
 
-
-function shuffleTiles() {
-    let curIdx = tileBoard.length;
-    while (curIdx--) {
-       let rand =  Math.floor(Math.random() * curIdx);
-       [tileBoard[curIdx], tileBoard[rand]] = [tileBoard[rand], tileBoard[curIdx]];
-    }
-    return tileBoard;
+function isAMatch() {
+ 
+    render();
 }
 
-
 function renderBoard() {
-    for (let i = 0; i < tileBoard.length; i++) { // idx returns the index of tileBoard array
-        const tileId = `tile${i}`;
+    tiles.forEach(function(tile, idx) {
+        const tileId = `tile${idx}`;
         const tileEl = document.getElementById(tileId);
-        tileBoard[i].show ? 
-        tileEl.style.backgroundColor = tileBoard[i].color : 
+        tiles[idx].show ? 
+        tileEl.style.backgroundColor = tiles[idx].color : 
         tileEl.style.backgroundColor = 'white';
+    });
+}
+
+function shuffleTiles() {
+    let tempTiles = [];
+    let tiles = [];
+    for (let tile of TILEBOARD) {
+        tempTiles.push({...tile}, {...tile});
     }
+    while (tempTiles.length) {
+        let rand =  Math.floor(Math.random() * tempTiles.length); 
+        let tile = tempTiles.splice(rand, 1)[0];
+        tiles.push(tile);
+    }
+    //console.log(tiles);
+    return tiles;
 }
 
 function render() {

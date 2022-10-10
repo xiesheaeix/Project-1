@@ -1,6 +1,6 @@
 * {
     /* height & width now includes border & padding */
-    /*box-sizing: border-box;*/
+    box-sizing: border-box;
   }
   
   body {
