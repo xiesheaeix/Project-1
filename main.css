@@ -23,7 +23,6 @@
     align-items: center;
   }
   
-
   main {
     display: grid;
     grid-template-columns: repeat(4, 18vmin);
@@ -31,18 +30,23 @@
     gap: 2vmin;
   }
 
-  
-img {
+main > img {
   width: 100%;
   height: 100%;
   border-radius: 5%;
 }
-img:hover{
+main > img:hover{
   box-shadow: 0 0 100px darkred; 
 }
 
+#scare {
+  margin-top: 0px;
+  height: 95%;
+  width: 100%;
+  position: absolute;
+}
+
   #bottom {
-  
     height: 50%;
     text-align: center;
   }

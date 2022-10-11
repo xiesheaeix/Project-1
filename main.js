@@ -3,23 +3,25 @@
 const CARD_BACK = 'imgs/back.jpg';
 const NOT_MATCH = new Audio('imgs/slice.wav');
 const START_AUDIO = new Audio('imgs/creepyGirl.wav');
+const LOST_AUDIO = new Audio('imgs/scream.wav');
 
 const TILEBOARD = [
-{'img': 'imgs/01.jpg', 'matched': false},
-{'img': 'imgs/06.jpg', 'matched': false},
-{'img': 'imgs/15.jpg', 'matched': false},
-{'img': 'imgs/36.jpg', 'matched': false},
-{'img': 'imgs/47.jpg', 'matched': false},
-{'img': 'imgs/59.jpg', 'matched': false},
-{'img': 'imgs/68.jpg', 'matched': false},
-{'img': 'imgs/76.jpg', 'matched': false},
+    { 'img': 'imgs/01.jpg', 'matched': false },
+    { 'img': 'imgs/06.jpg', 'matched': false },
+    { 'img': 'imgs/15.jpg', 'matched': false },
+    { 'img': 'imgs/36.jpg', 'matched': false },
+    { 'img': 'imgs/47.jpg', 'matched': false },
+    { 'img': 'imgs/59.jpg', 'matched': false },
+    { 'img': 'imgs/68.jpg', 'matched': false },
+    { 'img': 'imgs/76.jpg', 'matched': false },
 ];
 
 /*----- app's state (variables) -----*/
 let tiles; // object holding the 16 tiles with their properties set to the value of background color they will have, contains matching tiles
 let firstTile; // will hold value of other tile clicked
-let winner; // will be set to true if all tiles are matched by end of game
-let wrongClicks;
+let secondTile;
+let winner;
+let wrongGuesses;
 
 /*----- cached element references -----*/
 const board = document.querySelector('main');
@@ -35,74 +37,77 @@ init();
 function init() {
     tiles = shuffleTiles();
     firstTile = null;
-    winner = false;
-    wrongClicks = 0;
+    secondTile = null;
+    winner = null;
+    wrongGuesses = 0;
+    document.querySelector('h4').innerText = "Let's Play A Game...";
+    document.querySelector('#scare').style.visibility = 'hidden';
     START_AUDIO.play();
     render();
-}
-
-
-function handleClick(evt) {
-const curTile = parseInt(evt.target.id);
-if(isNaN(curTile) || tiles[curTile].matched === true || winner) return;
-tiles[curTile].matched = true;
-if (firstTile) {
-    let tempTiles = [];
-    tempTiles.push(firstTile);
-    tempTiles.push(tiles[curTile]);
-    if (tiles[curTile].img === firstTile.img) {
-        document.querySelector('h4').innerText = 'its a match';
-        tempTiles[0].matched = true;
-        tempTiles[1].matched = true;
-    } else { 
-        wrongClicks ++;
-        document.querySelector('h4').innerText = 'its NOT match';
-        setTimeout(function flipTiles() {
-            tempTiles[0].matched = false;
-            tempTiles[1].matched = false;
-            NOT_MATCH.play();
-            render();
-            tempTiles = [];
-        }, 300);
-    }
-    firstTile = null;
-} else {
-    firstTile = tiles[curTile];
-}
-render();
-}
-
-
-function gameOver() {
-    let allTilesMatched = tiles.every((tile) => {
-        if (tile.matched === true && wrongClicks <= 10) return true;
-    });
-    if (allTilesMatched) {
-        alert('winner');
-    } else if (wrongClicks === 10) return alert('loser');
 }
 
 function shuffleTiles() {
     let tempTiles = [];
     let tiles = [];
     for (let tile of TILEBOARD) {
-        tempTiles.push({...tile}, {...tile});
+        tempTiles.push({ ...tile }, { ...tile });
     }
     while (tempTiles.length) {
-        let rand =  Math.floor(Math.random() * tempTiles.length); 
+        let rand = Math.floor(Math.random() * tempTiles.length);
         let tile = tempTiles.splice(rand, 1)[0];
         tiles.push(tile);
     }
     return tiles;
 }
 
+function handleClick(evt) {
+    const curTile = parseInt(evt.target.id);
+    // Gaurds
+    if (isNaN(curTile) || tiles[curTile].matched === true || winner !== null) return;
+    if (firstTile) {
+        secondTile = tiles[curTile];
+        if (firstTile.img === secondTile.img) {
+            document.querySelector('h4').innerText = "It's a Match";
+            firstTile.matched = secondTile.matched = true;
+        } else {
+            wrongGuesses++;
+            document.querySelector('h4').innerText = "It's NOT a Match";
+            setTimeout(function flipTiles() {
+                NOT_MATCH.play();
+                firstTile = null;
+                secondTile = null;
+                render();
+            }, 500);
+        }
+    } else {
+        firstTile = tiles[curTile];
+    }
+    winner = getWinner();
+    render();
+}
+
+
+function getWinner() {
+    let allTilesMatched = tiles.every((tile) => tile.matched);
+    if (allTilesMatched && wrongGuesses <= 10) return true;
+    if (wrongGuesses >= 10) return false;
+}
+
+
 function render() {
-    tiles.forEach(function(tile, idx) {
+    tiles.forEach(function (tile, idx) {
         const imgEl = document.getElementById(idx);
-        const src = (tile.matched || tile === firstTile) ? tile.img: CARD_BACK;
+        const src = (tile.matched || tile === firstTile || tile === secondTile) ? tile.img : CARD_BACK;
         imgEl.src = src;
     });
-    document.querySelector('.bad-clicks').innerText = `Wrong clicks : ${wrongClicks}`;
-    button.style.visibility = gameOver ? 'hidden' : 'visible';
-    gameOver();
+    button.style.visibility = winner === null ? 'hidden' : 'visible';
+    document.querySelector('.bad-clicks').innerText = `Wrong Guesses : ${wrongGuesses}`;
+    if (winner) {
+        document.querySelector('h4').innerText = 'You Won!!!';
+    } else if (winner === false) {
+        NOT_MATCH.pause();
+        LOST_AUDIO.play();
+        document.querySelector('#scare').style.visibility = 'visible';
+        document.querySelector('h4').innerText = 'You Lost!!! Try again...';
+    } else return winner = null;
 }
