@@ -1,6 +1,7 @@
 /*----- constants -----*/
 
 const CARD_BACK = 'imgs/back.jpg';
+const AUDIO = new Audio('imgs/slice.wav');
 
 const TILEBOARD = [
 {'img': 'imgs/01.jpg', 'matched': false},
@@ -17,9 +18,6 @@ const TILEBOARD = [
 let tiles; // object holding the 16 tiles with their properties set to the value of background color they will have, contains matching tiles
 let firstTile; // will hold value of other tile clicked
 let winner; // will be set to true if all tiles are matched by end of game
-let ignoreClicks;
-//let gameOver;
-let matchedTiles = [];
 let wrongClicks;
 
 /*
@@ -31,24 +29,21 @@ const button = document.querySelector('button');
 board.addEventListener('click', handleClick);
 button.addEventListener('click', init);
 
-
-
 /*----- functions -----*/
 init();
 
 function init() {
     tiles = shuffleTiles();
     firstTile = null;
-    //winner = false;
+    winner = false;
     wrongClicks = 0;
-    document.querySelector('h4').innerText = '';
     render();
 }
 
 
 function handleClick(evt) {
 const curTile = parseInt(evt.target.id);
-if(isNaN(curTile) || ignoreClicks || winner) return;
+if(isNaN(curTile) || tiles[curTile].matched === true || winner) return;
 tiles[curTile].matched = true;
 if (firstTile) {
     let tempTiles = [];
@@ -58,13 +53,14 @@ if (firstTile) {
         document.querySelector('h4').innerText = 'its a match';
         tempTiles[0].matched = true;
         tempTiles[1].matched = true;
-        matchedTiles.push(...tempTiles);
     } else { 
         wrongClicks ++;
         document.querySelector('h4').innerText = 'its NOT match';
         setTimeout(function flipTiles() {
             tempTiles[0].matched = false;
             tempTiles[1].matched = false;
+            AUDIO.currentTime = 0;
+            AUDIO.play();
             render();
             tempTiles = [];
         }, 300);
@@ -77,18 +73,11 @@ render();
 }
 
 
-/*
 function isWinner() {
-    if (tiles.matched === true && wrongClicks <= 5){
-        console.log('winner');
-        winner = true;
-    } else {
-        console.log('lost');
-        return winner = false;
-    }
+ //if every tile in tiles array is matched before 10 clicks
+ // winner is set to true
     render();
 }
-*/
 
 function shuffleTiles() {
     let tempTiles = [];
@@ -101,7 +90,6 @@ function shuffleTiles() {
         let tile = tempTiles.splice(rand, 1)[0];
         tiles.push(tile);
     }
-    //console.log(tiles);
     return tiles;
 }
 
@@ -112,5 +100,6 @@ function render() {
         imgEl.src = src;
     });
     document.querySelector('.bad-clicks').innerText = `Wrong clicks : ${wrongClicks}`;
+    button.disabled = !winner;
     //button.style.visibility = winner ? 'visible' : 'hidden';
 }
