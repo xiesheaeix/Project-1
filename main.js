@@ -73,10 +73,13 @@ render();
 }
 
 
-function isWinner() {
- //if every tile in tiles array is matched before 10 clicks
- // winner is set to true
-    render();
+function gameOver() {
+    let allTilesMatched = tiles.every((tile) => {
+        if (tile.matched === true && wrongClicks <= 10) return true;
+    });
+    if (allTilesMatched) {
+        console.log('winner');
+    } else if (wrongClicks === 10) return console.log('loser');
 }
 
 function shuffleTiles() {
@@ -102,4 +105,5 @@ function render() {
     document.querySelector('.bad-clicks').innerText = `Wrong clicks : ${wrongClicks}`;
     button.disabled = !winner;
     //button.style.visibility = winner ? 'visible' : 'hidden';
+    gameOver();
 }
