@@ -18,10 +18,10 @@ const TILEBOARD = [
 
 /*----- app's state (variables) -----*/
 let tiles; // object holding the 16 tiles with their properties set to the value of background color they will have, contains matching tiles
-let firstTile; // will hold value of other tile clicked
-let secondTile;
-let winner;
-let wrongGuesses;
+let firstTile; // will hold value of first tile clicked
+let secondTile; // hold value of second tile clicked
+let winner; // true, false or null
+let wrongGuesses; // keep track of number of wrong guesses
 
 /*----- cached element references -----*/
 const board = document.querySelector('main');
@@ -69,6 +69,7 @@ function handleClick(evt) {
         if (firstTile.img === secondTile.img) {
             document.querySelector('h4').innerText = "It's a Match";
             firstTile.matched = secondTile.matched = true;
+            firstTile = null;
         } else {
             wrongGuesses++;
             document.querySelector('h4').innerText = "It's NOT a Match";
@@ -77,7 +78,7 @@ function handleClick(evt) {
                 firstTile = null;
                 secondTile = null;
                 render();
-            }, 500);
+            }, 600);
         }
     } else {
         firstTile = tiles[curTile];
@@ -86,13 +87,11 @@ function handleClick(evt) {
     render();
 }
 
-
 function getWinner() {
     let allTilesMatched = tiles.every((tile) => tile.matched);
     if (allTilesMatched && wrongGuesses <= 10) return true;
     if (wrongGuesses >= 10) return false;
 }
-
 
 function render() {
     tiles.forEach(function (tile, idx) {
@@ -100,7 +99,7 @@ function render() {
         const src = (tile.matched || tile === firstTile || tile === secondTile) ? tile.img : CARD_BACK;
         imgEl.src = src;
     });
-    button.style.visibility = winner === null ? 'hidden' : 'visible';
+    winner == null ? button.style.visibility = 'hidden' : button.style.visibility = 'visible';
     document.querySelector('.bad-clicks').innerText = `Wrong Guesses : ${wrongGuesses}`;
     if (winner) {
         document.querySelector('h4').innerText = 'You Won!!!';
