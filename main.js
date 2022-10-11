@@ -1,7 +1,8 @@
 /*----- constants -----*/
 
 const CARD_BACK = 'imgs/back.jpg';
-const AUDIO = new Audio('imgs/slice.wav');
+const NOT_MATCH = new Audio('imgs/slice.wav');
+const START_AUDIO = new Audio('imgs/creepyGirl.wav');
 
 const TILEBOARD = [
 {'img': 'imgs/01.jpg', 'matched': false},
@@ -20,7 +21,6 @@ let firstTile; // will hold value of other tile clicked
 let winner; // will be set to true if all tiles are matched by end of game
 let wrongClicks;
 
-/*
 /*----- cached element references -----*/
 const board = document.querySelector('main');
 const button = document.querySelector('button');
@@ -37,6 +37,7 @@ function init() {
     firstTile = null;
     winner = false;
     wrongClicks = 0;
+    START_AUDIO.play();
     render();
 }
 
@@ -59,8 +60,7 @@ if (firstTile) {
         setTimeout(function flipTiles() {
             tempTiles[0].matched = false;
             tempTiles[1].matched = false;
-            AUDIO.currentTime = 0;
-            AUDIO.play();
+            NOT_MATCH.play();
             render();
             tempTiles = [];
         }, 300);
@@ -78,8 +78,8 @@ function gameOver() {
         if (tile.matched === true && wrongClicks <= 10) return true;
     });
     if (allTilesMatched) {
-        console.log('winner');
-    } else if (wrongClicks === 10) return console.log('loser');
+        alert('winner');
+    } else if (wrongClicks === 10) return alert('loser');
 }
 
 function shuffleTiles() {
@@ -103,7 +103,6 @@ function render() {
         imgEl.src = src;
     });
     document.querySelector('.bad-clicks').innerText = `Wrong clicks : ${wrongClicks}`;
-    button.disabled = !winner;
-    //button.style.visibility = winner ? 'visible' : 'hidden';
+    button.style.visibility = gameOver ? 'hidden' : 'visible';
     gameOver();
 }
