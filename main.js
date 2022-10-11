@@ -1,16 +1,16 @@
 /*----- constants -----*/
 
-const CARD_BACK = 'https://i.imgur.com/kMgzjoV.png';
+const CARD_BACK = 'imgs/back.jpg';
 
 const TILEBOARD = [
-{'img': 'https://i.imgur.com/IxA6abS.png', 'matched': false},
-{'img': 'https://i.imgur.com/rjbdewk.png', 'matched': false},
-{'img': 'https://i.imgur.com/iYdIKbg.png', 'matched': false},
-{'img': 'https://i.imgur.com/1VLycTU.png', 'matched': false},
-{'img': 'https://i.imgur.com/YDiDLca.png', 'matched': false},
-{'img': 'https://i.imgur.com/7CaJBtw.png', 'matched': false},
-{'img': 'https://i.imgur.com/hNmaXyS.png', 'matched': false},
-{'img': 'https://i.imgur.com/qqxYTKG.png', 'matched': false},
+{'img': 'imgs/01.jpg', 'matched': false},
+{'img': 'imgs/06.jpg', 'matched': false},
+{'img': 'imgs/15.jpg', 'matched': false},
+{'img': 'imgs/36.jpg', 'matched': false},
+{'img': 'imgs/47.jpg', 'matched': false},
+{'img': 'imgs/59.jpg', 'matched': false},
+{'img': 'imgs/68.jpg', 'matched': false},
+{'img': 'imgs/76.jpg', 'matched': false},
 ];
 
 /*----- app's state (variables) -----*/
@@ -67,7 +67,7 @@ if (firstTile) {
             tempTiles[1].matched = false;
             render();
             tempTiles = [];
-        }, 500);
+        }, 300);
     }
     firstTile = null;
 } else {
