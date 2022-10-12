@@ -81,7 +81,7 @@ main > img:hover{
   @media screen and (max-width: 480px) {
     #scare {
       margin-top: 0px;
-      height: 60%;
+      height: 70%;
       width: 100%;
       position: absolute;
     }

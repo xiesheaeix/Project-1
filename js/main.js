@@ -1,9 +1,9 @@
 /*----- constants -----*/
 
 const CARD_BACK = 'imgs/back.jpg';
-const NOT_MATCH = new Audio('imgs/slice.wav');
-const START_AUDIO = new Audio('imgs/creepyGirl.wav');
-const LOST_AUDIO = new Audio('imgs/scream.wav');
+const NOT_MATCH = new Audio('sounds/slice.wav');
+const START_AUDIO = new Audio('sounds/creepyGirl.wav');
+const LOST_AUDIO = new Audio('sounds/scream.wav');
 
 const TILEBOARD = [
     { 'img': 'imgs/01.jpg', 'matched': false },
@@ -27,6 +27,7 @@ let wrongGuesses; // keep track of number of wrong guesses
 const board = document.querySelector('main');
 const button = document.querySelector('button');
 
+const messageEl = document.querySelector('h4');
 /*----- event listeners -----*/
 board.addEventListener('click', handleClick);
 button.addEventListener('click', init);
@@ -40,12 +41,11 @@ function init() {
     secondTile = null;
     winner = null;
     wrongGuesses = 0;
-    document.querySelector('h4').innerText = "Let's Play A Game... 10 GUESSES ONLY!";
+    messageEl.innerText = "Let's Play A Game... 10 GUESSES ONLY!";
     document.querySelector('#scare').style.visibility = 'hidden';
     START_AUDIO.play();
     render();
 }
-
 
 function shuffleTiles() {
     let tempTiles = [];
@@ -69,12 +69,12 @@ function handleClick(evt) {
         secondTile = tiles[curTile];
         if(firstTile === secondTile) return; // ignore when clicking same tile twice
         if (firstTile.img === secondTile.img) {
-            document.querySelector('h4').innerText = "It's a Match";
+            messageEl.innerText = "It's a Match";
             firstTile.matched = secondTile.matched = true;
             firstTile = null;
         } else {
             wrongGuesses++;
-            document.querySelector('h4').innerText = "It's NOT a Match";
+            messageEl.innerText = "It's NOT a Match";
             setTimeout(function flipTiles() {
                 NOT_MATCH.play();
                 firstTile = null;
@@ -104,7 +104,7 @@ function render() {
     winner == null ? button.style.visibility = 'hidden' : button.style.visibility = 'visible';
     document.querySelector('.bad-clicks').innerText = `Wrong Guesses : ${wrongGuesses}`;
     if (winner) {
-        document.querySelector('h4').innerText = 'You Won!!!';
+        messageEl.innerText = 'You Won!!!';
     } else if (winner === false) {
         NOT_MATCH.pause();
         LOST_AUDIO.play();
