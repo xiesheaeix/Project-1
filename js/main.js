@@ -67,6 +67,7 @@ function handleClick(evt) {
     if (isNaN(curTile) || tiles[curTile].matched === true || winner !== null) return;
     if (firstTile) {
         secondTile = tiles[curTile];
+        if(firstTile === secondTile) return; // ignore when clicking same tile twice
         if (firstTile.img === secondTile.img) {
             document.querySelector('h4').innerText = "It's a Match";
             firstTile.matched = secondTile.matched = true;
