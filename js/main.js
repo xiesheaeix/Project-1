@@ -46,6 +46,7 @@ function init() {
     render();
 }
 
+
 function shuffleTiles() {
     let tempTiles = [];
     let tiles = [];
