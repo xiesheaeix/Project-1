@@ -40,7 +40,7 @@ function init() {
     secondTile = null;
     winner = null;
     wrongGuesses = 0;
-    document.querySelector('h4').innerText = "Let's Play A Game...";
+    document.querySelector('h4').innerText = "Let's Play A Game... 10 GUESSES ONLY!";
     document.querySelector('#scare').style.visibility = 'hidden';
     START_AUDIO.play();
     render();
