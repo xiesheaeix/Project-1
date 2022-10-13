@@ -22,15 +22,21 @@ let firstTile; // will hold value of first tile clicked
 let secondTile; // hold value of second tile clicked
 let winner; // true, false or null
 let wrongGuesses; // keep track of number of wrong guesses
+let easyNumGuesses;
+let hardNumGuesses;
 
 /*----- cached element references -----*/
-const board = document.querySelector('main');
-const button = document.querySelector('button');
-
+const board = document.querySelector('.board');
+const resetBtn = document.querySelector('.reset-button');
 const messageEl = document.querySelector('h4');
+const scare = document.querySelector('#scare');
+const levelBtn = document.querySelector('.level');
+const guessCount = document.querySelector('.bad-clicks');
+
 /*----- event listeners -----*/
-board.addEventListener('click', handleClick);
-button.addEventListener('click', init);
+document.querySelector('.board').addEventListener('click', handleClick);
+resetBtn.addEventListener('click', init);
+levelBtn.addEventListener('click', chooseLevel);
 
 /*----- functions -----*/
 init();
@@ -41,9 +47,31 @@ function init() {
     secondTile = null;
     winner = null;
     wrongGuesses = 0;
-    messageEl.innerText = "Let's Play A Game... 10 GUESSES ONLY!";
-    document.querySelector('#scare').style.visibility = 'hidden';
-    START_AUDIO.play();
+    easyNumGuesses = null;
+    hardNumGuesses = null;
+    messageEl.innerText = 'Lets play a game';
+    board.style.visibility = 'hidden';
+    scare.style.visibility = 'hidden';
+    resetBtn.style.visibility = 'hidden';
+    guessCount.style.visibility = 'hidden';
+    levelBtn.style.visibility = 'visible';
+    render();
+}
+
+function chooseLevel(evt) {
+    if (evt.target.tagName === 'BUTTON') {
+        board.style.visibility = 'visible';
+        guessCount.style.visibility = 'visible';
+        START_AUDIO.play();
+        if (evt.target.innerText === 'Easy') {
+            messageEl.innerText = '10 guesses only!!!';
+            easyNumGuesses = true;
+        } else if (evt.target.innerText === 'Hard') {
+            messageEl.innerText = '5 guesses only!!!';
+            hardNumGuesses = true;
+        }
+        levelBtn.style.visibility = 'hidden'; 
+    }
     render();
 }
 
@@ -67,7 +95,7 @@ function handleClick(evt) {
     if (isNaN(curTile) || tiles[curTile].matched === true || winner !== null) return;
     if (firstTile) {
         secondTile = tiles[curTile];
-        if(firstTile === secondTile) return; // ignore when clicking same tile twice
+        if (firstTile === secondTile) return; // ignore when clicking same tile twice
         if (firstTile.img === secondTile.img) {
             messageEl.innerText = "It's a Match";
             firstTile.matched = secondTile.matched = true;
@@ -90,9 +118,15 @@ function handleClick(evt) {
 }
 
 function getWinner() {
-    let allTilesMatched = tiles.every((tile) => tile.matched);
-    if (allTilesMatched && wrongGuesses <= 10) return true;
-    if (wrongGuesses >= 10) return false;
+    if (easyNumGuesses) {
+        let allTilesMatched = tiles.every((tile) => tile.matched);
+        if (allTilesMatched && wrongGuesses <= 10) return true;
+        if (wrongGuesses >= 10) return false;
+    } else if (hardNumGuesses) {
+        let allTilesMatched = tiles.every((tile) => tile.matched);
+        if (allTilesMatched && wrongGuesses <= 5) return true;
+        if (wrongGuesses >= 5) return false;
+    }
 }
 
 function render() {
@@ -101,14 +135,14 @@ function render() {
         const src = (tile.matched || tile === firstTile || tile === secondTile) ? tile.img : CARD_BACK;
         imgEl.src = src;
     });
-    winner == null ? button.style.visibility = 'hidden' : button.style.visibility = 'visible';
-    document.querySelector('.bad-clicks').innerText = `Wrong Guesses : ${wrongGuesses}`;
+    guessCount.innerText = `Wrong Guesses : ${wrongGuesses}`;
+    winner == null ? resetBtn.style.visibility = 'hidden' : resetBtn.style.visibility = 'visible';
     if (winner) {
         messageEl.innerText = 'You Won!!!';
     } else if (winner === false) {
         NOT_MATCH.pause();
         LOST_AUDIO.play();
-        document.querySelector('#scare').style.visibility = 'visible';
-        document.querySelector('h4').innerText = 'You Lost!!! Try again...';
+        scare.style.visibility = 'visible';
+        messageEl.innerText = 'You Lost!!! Try again...';
     } else return winner = null;
 }
