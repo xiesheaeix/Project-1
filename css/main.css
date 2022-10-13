@@ -109,7 +109,7 @@
   @media screen and (max-width: 1024px) {
     #scare {
       margin-top: 0px;
-      height: 50%;
+      height: 80%;
       width: 100%;
       position: absolute;
     }
